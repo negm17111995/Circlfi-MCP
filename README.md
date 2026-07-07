@@ -10,8 +10,23 @@ This MCP exposes two primary tools to your AI assistant:
 
 ### 1. `get_stock_valuation`
 Fetch the complete intrinsic valuation breakdown for any specific stock ticker.
-* **Free Users:** Access the core Bayesian DCF, Earnings Power Value (EPV), and CUCE Ensemble models.
-* **Premium Subscribers:** Unlock all 13 institutional models (Markov DDM, ML-RIV, PWERM, Dynamic NAV, etc.).
+
+**Free Users:** You get instant access to the 3 fundamental valuation models:
+1. Bayesian DCF (Discounted Cash Flow)
+2. EPV (Earnings Power Value)
+3. CUCE Ensemble (CirclFi Unified Consensus Estimate)
+
+**Premium Subscribers:** You unlock the complete suite of 13 institutional valuation models, including:
+4. EROIC Spread Valuation
+5. First Chicago Method
+6. Markov DDM (Dividend Discount Model)
+7. ML-RIV (Machine Learning Residual Income Valuation)
+8. PWERM (Probability-Weighted Expected Return Method)
+9. Dynamic NAV (Net Asset Value)
+10. OPM (Option Pricing Model)
+11. Monte Carlo Simulations
+12. Comparable Company Analysis (CCA)
+13. Precedent Transactions Analysis
 
 ### 2. `get_market_screener` *(Premium Only)*
 Command your AI to screen the entire US stock market (5,900+ stocks) in seconds.
@@ -27,7 +42,27 @@ To use this server, you need to add it to your Claude Desktop configuration.
    * **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
    * **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 
-2. Add the `circlfi` server to your `mcpServers` object. Replace `YOUR_GUMROAD_EMAIL@gmail.com` with the email you used to subscribe to CirclFi.
+2. Add the `circlfi` server to your `mcpServers` object as shown below.
+
+### Setup for Free Users
+If you are not subscribed, simply leave the `CIRCLFI_EMAIL` blank. You will automatically get access to the 3 free valuation models for any stock.
+
+```json
+{
+  "mcpServers": {
+    "circlfi": {
+      "command": "npx",
+      "args": ["-y", "github:negm17111995/Circlfi-MCP"],
+      "env": {
+        "CIRCLFI_EMAIL": ""
+      }
+    }
+  }
+}
+```
+
+### Setup for Premium Subscribers
+If you have an active CirclFi subscription, replace the email below with the exact email you used to purchase via Gumroad. The server will securely verify your active subscription in real-time and unlock all 13 models + the market screener.
 
 ```json
 {
@@ -53,7 +88,7 @@ It does not contain any sensitive algorithms, proprietary valuation models, or h
 When your AI assistant requests a valuation or runs a screener:
 1. This client forwards the request (along with your configured `CIRCLFI_EMAIL`) to the private CirclFi API (`https://circlfi.com/api/mcp`).
 2. The CirclFi API securely verifies your active subscription with Gumroad in real-time.
-3. If valid, the proprietary 13-model data is returned directly to your AI assistant for analysis.
+3. If valid, the proprietary 13-model data is returned directly to your AI assistant for analysis. If left blank or the subscription is expired, the AI receives the free tier data and an upsell message.
 
 ## Example Prompts to try with Claude
 * *"What is the intrinsic value of AAPL according to CirclFi?"*
