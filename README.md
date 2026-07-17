@@ -1,99 +1,157 @@
 # CirclFi MCP Server
 
+[![npm version](https://img.shields.io/npm/v/circlfi-mcp)](https://www.npmjs.com/package/circlfi-mcp)
+[![MCP](https://img.shields.io/badge/Model%20Context%20Protocol-server-blue)](https://modelcontextprotocol.io/)
+[![License: ISC](https://img.shields.io/badge/License-ISC-green.svg)](./LICENSE)
+
 The official [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for **[CirclFi](https://circlfi.com)** — the institutional-grade equity valuation platform.
 
-This MCP server acts as a secure bridge between AI assistants (like Claude) and the CirclFi valuation engine, allowing your AI to instantly analyze, screen, and compare intrinsic valuations across 5,900+ US equities.
+Give any AI assistant direct access to **13 valuation models across 5,900+ US stocks**, recalculated daily from SEC EDGAR, FRED, and GDELT data. Intrinsic values, Quality of Company scores (32 fundamental signals), and Value Trap risk scores — as native AI tools.
 
-## Features & Available Tools
+## Two ways to connect
 
-This MCP exposes two primary tools to your AI assistant:
+### Option A — Remote server (no install, works everywhere)
 
-### 1. `get_stock_valuation`
-Fetch the complete intrinsic valuation breakdown for any specific stock ticker.
+Point any MCP-compatible client at the hosted endpoint:
 
-**Free Users:** You get instant access to the 3 fundamental valuation models:
-1. Bayesian DCF (Discounted Cash Flow)
-2. EPV (Earnings Power Value)
-3. CUCE Ensemble (CirclFi Unified Consensus Estimate)
+```
+https://circlfi.com/mcp
+```
 
-**Premium Subscribers:** You unlock the complete suite of 13 institutional valuation models, including:
-4. EROIC Spread Valuation
-5. First Chicago Method
-6. Markov DDM (Dividend Discount Model)
-7. ML-RIV (Machine Learning Residual Income Valuation)
-8. PWERM (Probability-Weighted Expected Return Method)
-9. Dynamic NAV (Net Asset Value)
-10. OPM (Option Pricing Model)
-11. Monte Carlo Simulations
-12. Comparable Company Analysis (CCA)
-13. Precedent Transactions Analysis
+- **Transport**: Streamable HTTP (stateless), current MCP spec
+- **Auth**: none needed for the free tier. Premium subscribers send their Gumroad purchase email as a bearer token: `Authorization: Bearer you@example.com`
+- Works with ChatGPT connectors (developer mode), Claude custom connectors (web/desktop), agent frameworks, and any cloud client that can't run local processes.
 
-### 2. `get_market_screener` *(Premium Only)*
-Command your AI to screen the entire US stock market (5,900+ stocks) in seconds.
-* **Filter by:** Quality of Company (QOC), Value Trap Score, or specific Industries.
-* **Data Formatting:** The AI can request the data in JSON for analysis, or generate a downloadable CSV file containing the screener results.
-* **Fetch All:** Instantly pull the entire database of valuations.
+### Option B — Local stdio server (npm)
 
-## Installation & Setup (Claude Desktop)
+```bash
+npx -y circlfi-mcp
+```
 
-To use this server, you need to add it to your Claude Desktop configuration.
+(Installing from GitHub also works: `npx -y github:negm17111995/Circlfi-MCP`)
 
-1. Open your Claude Desktop configuration file. Usually located at:
-   * **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-   * **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+## Install in your client
 
-2. Add the `circlfi` server to your `mcpServers` object as shown below.
+<details>
+<summary><strong>Claude Desktop</strong></summary>
 
-### Setup for Free Users
-If you are not subscribed, simply leave the `CIRCLFI_EMAIL` blank. You will automatically get access to the 3 free valuation models for any stock.
+Add to `claude_desktop_config.json` (macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`, Windows: `%APPDATA%\Claude\claude_desktop_config.json`):
 
 ```json
 {
   "mcpServers": {
     "circlfi": {
       "command": "npx",
-      "args": ["-y", "github:negm17111995/Circlfi-MCP"],
-      "env": {
-        "CIRCLFI_EMAIL": ""
-      }
+      "args": ["-y", "circlfi-mcp"],
+      "env": { "CIRCLFI_EMAIL": "" }
     }
   }
 }
 ```
 
-### Setup for Premium Subscribers
-If you have an active CirclFi subscription, replace the email below with the exact email you used to purchase via Gumroad. The server will securely verify your active subscription in real-time and unlock all 13 models + the market screener.
+Restart Claude Desktop and look for the tools icon. Premium subscribers: put your Gumroad purchase email in `CIRCLFI_EMAIL`.
+</details>
+
+<details>
+<summary><strong>Claude Code</strong></summary>
+
+```bash
+claude mcp add circlfi -- npx -y circlfi-mcp
+```
+
+Or with premium access:
+
+```bash
+claude mcp add circlfi -e CIRCLFI_EMAIL=you@example.com -- npx -y circlfi-mcp
+```
+</details>
+
+<details>
+<summary><strong>Cursor</strong></summary>
+
+[**One-click install →**](cursor://anysphere.cursor-deeplink/mcp/install?name=circlfi&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImNpcmNsZmktbWNwIl19)
+
+Or add to `~/.cursor/mcp.json`:
 
 ```json
 {
   "mcpServers": {
-    "circlfi": {
-      "command": "npx",
-      "args": ["-y", "github:negm17111995/Circlfi-MCP"],
-      "env": {
-        "CIRCLFI_EMAIL": "YOUR_GUMROAD_EMAIL@gmail.com"
-      }
-    }
+    "circlfi": { "command": "npx", "args": ["-y", "circlfi-mcp"] }
   }
 }
 ```
+</details>
 
-3. Restart Claude Desktop. You will now see the hammer icon 🔨 indicating that the CirclFi tools are available!
+<details>
+<summary><strong>VS Code (Copilot / MCP)</strong></summary>
 
-## How It Works (Security & Architecture)
+```bash
+code --add-mcp '{"name":"circlfi","command":"npx","args":["-y","circlfi-mcp"]}'
+```
+</details>
 
-This repository contains a **Thin Client**. 
-It does not contain any sensitive algorithms, proprietary valuation models, or hardcoded API keys. 
+<details>
+<summary><strong>Windsurf</strong></summary>
 
-When your AI assistant requests a valuation or runs a screener:
-1. This client forwards the request (along with your configured `CIRCLFI_EMAIL`) to the private CirclFi API (`https://circlfi.com/api/mcp`).
-2. The CirclFi API securely verifies your active subscription with Gumroad in real-time.
-3. If valid, the proprietary 13-model data is returned directly to your AI assistant for analysis. If left blank or the subscription is expired, the AI receives the free tier data and an upsell message.
+Add to `~/.codeium/windsurf/mcp_config.json`:
 
-## Example Prompts to try with Claude
-* *"What is the intrinsic value of AAPL according to CirclFi?"*
-* *"Use the CirclFi market screener to generate a CSV of all Technology stocks with a Quality of Company score above 7 and a Value Trap score below 20."*
-* *"Compare the Bayesian DCF valuations of MSFT and GOOGL."*
+```json
+{
+  "mcpServers": {
+    "circlfi": { "command": "npx", "args": ["-y", "circlfi-mcp"] }
+  }
+}
+```
+</details>
+
+<details>
+<summary><strong>ChatGPT (connectors / developer mode)</strong></summary>
+
+ChatGPT connects to remote MCP servers. In **Settings → Connectors → Advanced → Developer mode**, add a custom connector with the URL:
+
+```
+https://circlfi.com/mcp
+```
+</details>
+
+<details>
+<summary><strong>Any other MCP client</strong></summary>
+
+- **Local**: command `npx`, args `["-y", "circlfi-mcp"]`, optional env `CIRCLFI_EMAIL`
+- **Remote**: Streamable HTTP at `https://circlfi.com/mcp`, optional header `Authorization: Bearer <gumroad-email>`
+</details>
+
+## Available tools
+
+### `get_stock_valuation`
+
+Complete intrinsic valuation profile for any US ticker: fair value, implied upside, and statistical confidence per model, plus the Quality of Company (QOC) score and Value Trap risk score.
+
+**Free tier** — 3 models, no signup: Bayesian DCF (10,000-run Monte Carlo with jump-diffusion), Earnings Power Value (Greenwald), CUCE Ensemble (meta-model).
+
+**Premium** — all 13 models: the above plus EROIC Spread, First Chicago, Markov DDM, ML-RIV, Dynamic NAV, PWERM, Regime Cross-Sectional, Sentiment SOTP, FTNN Topology, and RCMH-DCF. Full methodology: [circlfi.com/methodology](https://circlfi.com/methodology/)
+
+### `get_market_screener` *(Premium)*
+
+Screen all 5,900+ US stocks in one call. Filter by minimum QOC, maximum Value Trap score, or industry; return JSON for analysis or CSV for download.
+
+## Example prompts
+
+- *"What is the intrinsic value of AAPL according to CirclFi?"*
+- *"Screen for Software stocks with QOC above 8 and Value Trap below 10, output as CSV."*
+- *"Compare the Bayesian DCF valuations of MSFT and GOOGL and tell me which trades further below fair value."*
+
+## How it works (security & architecture)
+
+This repository is a **thin client** — no proprietary algorithms, no API keys. Tool calls are forwarded to the CirclFi API (`https://circlfi.com/api/mcp`), which verifies premium subscriptions with Gumroad in real time and returns model output. Free-tier requests need no account at all. The hosted remote endpoint (`https://circlfi.com/mcp`) exposes the identical tools directly over Streamable HTTP.
+
+All output is quantitative model data for educational purposes — not financial advice ([disclaimer](https://circlfi.com/disclaimer/)).
+
+## Pricing
+
+- **Free**: 3 models per stock, unlimited tickers
+- **Premium** ($39/mo or $299/yr): all 13 models + market screener — [subscribe via Gumroad](https://circlfi.gumroad.com/l/dwaxoj), then use your purchase email as `CIRCLFI_EMAIL` (local) or bearer token (remote)
 
 ## Support
-For issues with the MCP Server, please open a GitHub Issue. For questions regarding the valuations or your subscription, contact CirclFi support.
+
+Open a [GitHub Issue](https://github.com/negm17111995/Circlfi-MCP/issues) for server problems. For valuation methodology or subscription questions, see [circlfi.com](https://circlfi.com).

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.negm17111995/circlfi-mcp",
+  "description": "Institutional-grade stock valuations for AI agents: 13 models (Bayesian DCF, EPV, ML-RIV and more), quality and value-trap scores, 5,900+ US stocks updated daily from SEC EDGAR.",
+  "status": "active",
+  "version": "1.1.0",
+  "websiteUrl": "https://circlfi.com/mcp/",
+  "repository": {
+    "url": "https://github.com/negm17111995/Circlfi-MCP",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "circlfi-mcp",
+      "version": "1.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "CIRCLFI_EMAIL",
+          "description": "Gumroad purchase email to unlock all 13 models and the market screener (optional — free tier works without it)",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://circlfi.com/mcp"
+    }
+  ]
+}

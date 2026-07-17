@@ -1,19 +1,50 @@
 {
   "name": "circlfi-mcp",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "description": "MCP server for CirclFi — institutional-grade stock valuations from a 13-model engine (Bayesian DCF, EPV, ML-RIV and more) across 5,900+ US stocks, updated daily from SEC EDGAR. Turns Claude, Cursor, ChatGPT and any MCP client into a stock analyst.",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0"
-  },
+  "type": "module",
   "bin": {
     "circlfi-mcp": "./index.js"
   },
-  "type": "module"
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE",
+    "server.json"
+  ],
+  "mcpName": "io.github.negm17111995/circlfi-mcp",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "stocks",
+    "finance",
+    "stock-valuation",
+    "intrinsic-value",
+    "dcf",
+    "stock-analysis",
+    "investing",
+    "claude",
+    "ai-agent"
+  ],
+  "author": "Ahmed Negm (https://circlfi.com)",
+  "license": "ISC",
+  "homepage": "https://circlfi.com/mcp/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/negm17111995/Circlfi-MCP.git"
+  },
+  "bugs": {
+    "url": "https://github.com/negm17111995/Circlfi-MCP/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0"
+  }
 }

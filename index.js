@@ -11,7 +11,7 @@ const EMAIL = process.env.CIRCLFI_EMAIL || "";
 
 const server = new Server({
   name: "circlfi-mcp",
-  version: "1.0.0"
+  version: "1.1.0"
 }, {
   capabilities: {
     tools: {}
